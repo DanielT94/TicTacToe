@@ -1,5 +1,10 @@
-PLAYER_ONE = "x"
+PLAYER_ONE = "X"
 PLAYER_TWO = "O"
+WIN_COMBINATIONS = [
+  [0, 1, 2], [3, 4, 5], [6, 7, 8],
+  [0, 3, 6], [1, 4, 7], [2, 5, 8],
+  [0, 4, 8], [2, 4, 6]
+]
 
 def initialize_board
   @count = 0
@@ -49,39 +54,43 @@ def play
   input = place_piece
   return false if !input
   update_board(input)
-  turn_count
   display_board(@board)
-  end_game
 end
 
 def switch_player
-  if(@player == PLAYER_ONE)
-    @player = PLAYER_TWO
+  if(@current_player == PLAYER_ONE)
+    @current_player = PLAYER_TWO
   else
-    @player = PLAYER_ONE
+    @current_player = PLAYER_ONE
   end
 end
 
 def turn_count
   @count = @count + 1
-end
-
-def end_game
   if @count >= 9
-    #or player has won
     @game_over = true
+    puts "Game Over, it's a draw"
   end
 end
+
+def won_game
+  WIN_COMBINATIONS.any? do |combo|
+    if @board[combo[0]] == @board[combo[1]] && @board[combo[1]] == @board[combo[2]]
+      @game_over = true
+      puts "#{@current_player} won. Congratulations"
+    end
+  end
+end
+  
 
 start_game
 initialize_board
 display_board(@board)
 while @game_over == false
   play
+  won_game
+  turn_count
   switch_player
 end
-puts "Game Over"
 
-
-#Add functionality to end game when winning combination played
-#Make switch_player work
+#Fix valid move method
