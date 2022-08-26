@@ -31,30 +31,30 @@ def start_game
 end
 
 def place_piece
-  begin
-    print "#{@current_player}, select your placement: "
-    input = gets.chomp.to_i
-    return false if(input == 999)
-    if(!valid = valid_move(input))
-      puts "That spot is taken, pick another: "
+  puts "#{@current_player}, select your placement: "
+  input = gets.chomp.to_i
+    if valid_move(input)
+      update_board(input)
+    else
+      puts "Invalid move, please select an available place."
+      place_piece
     end
-  end while(!valid)
-  input
+end
+
+def position_taken_x?(input)
+  @board[input-1] == "X"
+end
+
+def position_taken_o?(input)
+  @board[input-1] == "O"
 end
 
 def valid_move(input)
-  @board[input -1] != "X" || "O"
+  !position_taken_x?(input) && !position_taken_o?(input) && input.between?(1, 9) 
 end
 
 def update_board(input)
   @board[input -1] = @current_player
-end
-
-def play
-  input = place_piece
-  return false if !input
-  update_board(input)
-  display_board(@board)
 end
 
 def switch_player
@@ -81,16 +81,14 @@ def won_game
     end
   end
 end
-  
 
 start_game
 initialize_board
 display_board(@board)
 while @game_over == false
-  play
+  place_piece
+  display_board(@board)
   won_game
   turn_count
   switch_player
 end
-
-#Fix valid move method
